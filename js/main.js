@@ -1,5 +1,5 @@
 import { setSearchFocus } from "./searchBar.js";
-import { getSearchTerm } from "./dataFunctions.js";
+import { getSearchTerm, retrieveSearchResults } from "./dataFunctions.js";
 
 document.addEventListener("readystatechange", (event) => {
   if (event.target.readyState === "complete") {
@@ -11,7 +11,7 @@ const initApp = () => {
   // set the focus
   setSearchFocus();
 
-  // 3 listeners clear text
+  // TODO 3 listeners clear text
 
   // 1 listener on form
   const form = document.getElementById("searchBar");
@@ -30,9 +30,11 @@ const submitTheSearch = (event) => {
 
 // Procedural
 const processTheSearch = async () => {
-  // clear the stats line
+  // TODO clear the stats line
 
   const searchTerm = getSearchTerm();
   if (searchTerm === "") return;
   const resultArray = await retrieveSearchResults(searchTerm);
-};
+
+  if (resultArray.length) ;// TODO build search results
+  // TODOset stats line
