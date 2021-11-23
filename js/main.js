@@ -37,7 +37,7 @@ const initApp = () => {
 
 // Procedural Workflow Function
 const submitTheSearch = (event) => {
-  event.preventDefualt;
+  event.preventDefault();
   deleteSearchResults();
   // process the search
   processTheSearch();
