@@ -1,7 +1,8 @@
 // The object to take over all these functions
 // constructor takes a raw result PAGE from wiki search api
-class WikiSearchResult extends Object {
+export default class WikiSearchResult extends Object {
   constructor(resultPage) {
+    super();
     this.id = resultPage.pageid;
     this.title = resultPage.title;
     this.text = resultPage.extract;
