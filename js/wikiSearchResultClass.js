@@ -28,6 +28,10 @@ export default class WikiSearchResult extends Object {
     return resultItem;
   }
 
+  appendResultToElem(htmlElement) {
+    htmlElement.append(this.generateResultHTML());
+  }
+
   #createResultItem() {
     const resultItem = document.createElement("div");
     resultItem.classList.add("resultItem");

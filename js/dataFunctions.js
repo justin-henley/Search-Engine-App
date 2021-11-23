@@ -38,9 +38,7 @@ const getMaxChars = () => {
 const requestData = async (searchString) => {
   try {
     const response = await fetch(searchString);
-
     if (!response.ok) throw new Error("Status code not in 200-299 range");
-
     return await response.json();
   } catch (error) {
     console.error(error);
@@ -51,10 +49,8 @@ const processWikiResults = (pages) => {
   const resultArray = [];
   for (let page of Object.values(pages)) {
     const item = new WikiSearchResult(page);
-
     resultArray.push(item);
   }
-
   return resultArray;
 };
 

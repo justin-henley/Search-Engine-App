@@ -10,9 +10,7 @@ export const deleteSearchResults = () => {
 
 export const buildSearchResults = (resultArray) => {
   resultArray.forEach((result) => {
-    const resultHTML = result.generateResultHTML();
-    const searchResults = document.getElementById("searchResults");
-    searchResults.append(resultHTML);
+    result.appendResultToElem(searchResults);
   });
 };
 
