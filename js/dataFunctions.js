@@ -25,7 +25,7 @@ export const retrieveSearchResults = async (searchTerm) => {
 
 const getWikiSearchString = (searchTerm) => {
   const maxChars = getMaxChars();
-  const rawSearchString = `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages%7Cextracts&list=search&srsearch=meaning`;
+  const rawSearchString = `https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=kangaroo&gsrlimit=20&prop=pageimages|extracts&exchars=130&exintro&exexpliantext&exlimit=max&format=json&origin=*`;
   const searchString = encodeURI(rawSearchString);
   // TODO
   console.log("getWikiSearchString");
