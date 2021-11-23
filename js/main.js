@@ -4,13 +4,13 @@ import {
   clearSearchText,
   clearPushListener,
 } from "./searchBar.js";
-import { getSearchTerm, retrieveSearchResults } from "./dataFunctions.js";
 import {
   deleteSearchResults,
   buildSearchResults,
   clearStatsLine,
   setStatsLine,
 } from "./searchResults.js";
+import WikiSearch from "./wikiSearchClass.js";
 
 document.addEventListener("readystatechange", (event) => {
   if (event.target.readyState === "complete") {
@@ -50,9 +50,9 @@ const processTheSearch = async () => {
   // clear the stats line
   clearStatsLine();
 
-  const searchTerm = getSearchTerm();
-  if (searchTerm === "") return;
-  const resultArray = await retrieveSearchResults(searchTerm);
+  const rawSearchTerm = document.getElementById("search").value.trim();
+  const wikiSearch = new WikiSearch();
+  const resultArray = await wikiSearch.getSearchResults(rawSearchTerm);
 
   if (resultArray.length) buildSearchResults(resultArray);
 
