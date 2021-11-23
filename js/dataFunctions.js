@@ -1,50 +1,12 @@
 // Begin conversion to oop
 
-export const getSearchTerm = () => {
+export const retrieveSearchResults = async (searchTerm) => {};
+
+const getWikiSearchString = (searchTerm) => {};
+
+// Bad harness, do better later. Need to test for now
+export const searchHarness = () => {
   const rawSearchTerm = document.getElementById("search").value.trim();
-  const regex = /[ ]{2,}/gi;
-  const searchTerm = rawSearchTerm.replaceAll(regex, " ");
-  return searchTerm;
-};
-
-export const retrieveSearchResults = async (searchTerm) => {
-  const wikiSearchString = getWikiSearchString(searchTerm);
-  const wikiSearchResults = await requestData(wikiSearchString);
-  let resultArray = [];
-  if (wikiSearchResults?.hasOwnProperty("query")) {
-    resultArray = processWikiResults(wikiSearchResults.query.pages);
-  }
-  return resultArray;
-};
-
-const getWikiSearchString = (searchTerm) => {
-  const maxChars = getMaxChars();
-  const apiEndpoint = "https://en.wikipedia.org/w/api.php";
-  let params = `action=query&generator=search&gsrsearch=${searchTerm}&gsrlimit=20&prop=pageimages|extracts&exchars=${maxChars}&exintro&explaintext&exlimit=max&format=json&origin=*`;
-  const rawSearchString = apiEndpoint + "?" + params;
-  const searchString = encodeURI(rawSearchString);
-  return searchString;
-};
-
-const getMaxChars = () => {
-  const width = window.innerWidth || document.body.clientWidth;
-  let maxChars;
-  if (width < 414) maxChars = 65;
-  else if (width >= 414 && width < 1400) maxChars = 100;
-  else if (width >= 1400) maxChars = 130;
-  return maxChars;
-};
-
-const requestData = async (searchString) => {
-  try {
-    const response = await fetch(searchString);
-
-    if (!response.ok) throw new Error("Status code not in 200-299 range");
-
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-  }
 };
 
 const processWikiResults = (results) => {
@@ -219,3 +181,78 @@ const testData = {
     },
   },
 };
+
+class WikiSearch extends Object {
+  #searchTerm = "";
+  #searchResults = [];
+
+  constructor(rawSearchTerm) {
+    // Generate the results
+    this.#retrieveSearchResults(rawSearchTerm);
+  }
+
+  hasResults() {
+    return this.#searchResults === [] ? false : true;
+  }
+
+  getResults() {
+    if (this.hasResults()) return this.#searchResults;
+    return undefined;
+  }
+
+  async #retrieveSearchResults(rawSearchTerm) {
+    // Generate the wiki search url
+    const wikiSearchString = this.#getWikiSearchString(rawSearchTerm);
+    // Fetch the data from wikipedia api
+    const wikiSearchResults = await this.#requestData(wikiSearchString);
+    // Process results
+    let resultArray = [];
+    if (wikiSearchResults?.hasOwnProperty("query")) {
+      resultArray = processWikiResults(wikiSearchResults.query.pages);
+    }
+    this.#searchResults = resultArray;
+  }
+
+  #getWikiSearchString(rawSearchTerm) {
+    // Get parsed search term
+    const searchTerm = this.#parseSearchTerm(rawSearchTerm);
+    // Build the request components
+    const maxChars = this.#getMaxChars();
+    const apiEndpoint = "https://en.wikipedia.org/w/api.php";
+    let params = `action=query&generator=search&gsrsearch=${searchTerm}&gsrlimit=20&prop=pageimages|extracts&exchars=${maxChars}&exintro&explaintext&exlimit=max&format=json&origin=*`;
+    // Build the request
+    const rawWikiSearchString = apiEndpoint + "?" + params;
+    const wikiSearchString = encodeURI(rawWikiSearchString);
+    // Return the request URI
+    return wikiSearchString;
+  }
+
+  #parseSearchTerm(rawSearchTerm) {
+    // Trim whitespace from search string
+    rawSearchTerm = rawSearchTerm.trim();
+    // Remove extra spaces and return
+    const regex = /[ ]{2,}/gi;
+    return rawSearchTerm.replaceAll(regex, " ");
+  }
+
+  async #requestData(searchString) {
+    try {
+      const response = await fetch(searchString);
+
+      if (!response.ok) throw new Error("Status code not in 200-299 range");
+
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  #getMaxChars() {
+    const width = window.innerWidth || document.body.clientWidth;
+    let maxChars;
+    if (width < 414) maxChars = 65;
+    else if (width >= 414 && width < 1400) maxChars = 100;
+    else if (width >= 1400) maxChars = 130;
+    return maxChars;
+  }
+}
