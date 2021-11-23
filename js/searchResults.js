@@ -51,6 +51,7 @@ const createResultImage = (result) => {
   const img = document.createElement("img");
   img.src = result.img;
   img.alt = result.title;
+  resultImage.append(img);
   return resultImage;
 };
 
