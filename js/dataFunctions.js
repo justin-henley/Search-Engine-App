@@ -1,36 +1,37 @@
 export const getSearchTerm = () => {
-  const rawSearchTerm = document.getElementById("search").ariaValueMax.trim();
+  const rawSearchTerm = document.getElementById("search").value.trim();
   const regex = /[ ]{2,}/gi;
   const searchTerm = rawSearchTerm.replaceAll(regex, " ");
+  // TODO
+  console.log("getSearchTerm");
+  console.log(`Raw: ${rawSearchTerm}\nSearch: ${searchTerm}`);
   return searchTerm;
 };
 
 export const retrieveSearchResults = async (searchTerm) => {
-  const wikiSearchString = getWikiSearchString;
+  const wikiSearchString = getWikiSearchString(searchTerm);
   const wikiSearchResults = await requestData(wikiSearchString);
   let resultArray = [];
-  if (wikiSearchResults.hasOwnProperty("query")) {
+  if (wikiSearchResults?.hasOwnProperty("query")) {
     resultArray = processWikiResults(wikiSearchResults.query.pages);
   }
+  // TODO
+  console.log("retrieveSearchResults");
+  console.log(
+    `Search String: ${searchString}\n Wiki Results: ${wikiSearchResults}\n Results Array: ${resultArray}`
+  );
   return resultArray;
 };
 
 const getWikiSearchString = (searchTerm) => {
   const maxChars = getMaxChars();
-  const rawSearchString = `
-    https://en.wikipedia.org/w/api.php
-        ?action=query
-        &generator=search
-            &gsrsearch=${searchTerm}
-            &gsrlimit=20
-        &prop=pageimages|extracts
-            &exchars=${maxChars}
-            &exintro
-            &explaintext
-            &exlimit=max
-        &format=json
-        &origin=*`;
+  const rawSearchString = `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages%7Cextracts&list=search&srsearch=meaning`;
   const searchString = encodeURI(rawSearchString);
+  // TODO
+  console.log("getWikiSearchString");
+  console.log(
+    `Search Term: ${searchTerm}\nMax Chars: ${maxChars}\nRaw Search String: ${rawSearchString}\nSearch String: ${searchString}`
+  );
   return searchString;
 };
 
@@ -46,8 +47,10 @@ const getMaxChars = () => {
 const requestData = async (searchString) => {
   try {
     const response = await fetch(searchString);
-    const data = await response.json();
-    return data;
+
+    if (!response.ok) throw new Error("Status code not in 200-299 range");
+
+    return await response.json();
   } catch (error) {
     console.error(error);
   }
